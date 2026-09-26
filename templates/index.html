@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Personal Task Management System
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     HEADER
+========================================= -->
+
+<header class="main-header">
+
+    <div class="header-content">
+
+        <h1>
+            Personal Task Management System
+        </h1>
+
+        <p>
+            Organize your tasks, deadlines and priorities
+        </p>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================
+     MAIN CONTENT
+========================================= -->
+
+<main class="container">
+
+
+    <!-- =====================================
+         FLASH MESSAGES
+    ====================================== -->
+
+    {% with messages = get_flashed_messages(
+        with_categories=true
+    ) %}
+
+        {% if messages %}
+
+            <div class="flash-container">
+
+                {% for category, message in messages %}
+
+                    <div
+                        class="flash-message {{ category }}"
+                    >
+
+                        {{ message }}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+
+
+    <!-- =====================================
+         DASHBOARD STATISTICS
+    ====================================== -->
+
+    <section class="statistics">
+
+
+        <div class="stat-card">
+
+            <h3>
+                Total Tasks
+            </h3>
+
+            <p>
+                {{ total }}
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                Pending
+            </h3>
+
+            <p>
+                {{ pending }}
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                In Progress
+            </h3>
+
+            <p>
+                {{ in_progress }}
+            </p>
+
+        </div>
+
+
+        <div class="stat-card">
+
+            <h3>
+                Completed
+            </h3>
+
+            <p>
+                {{ completed }}
+            </p>
+
+        </div>
+
+
+        <div class="stat-card overdue-stat">
+
+            <h3>
+                Overdue
+            </h3>
+
+            <p>
+                {{ overdue }}
+            </p>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================
+         ADD TASK
+    ====================================== -->
+
+    <section class="card">
+
+        <h2>
+            Add New Task
+        </h2>
+
+
+        <form
+            action="{{ url_for('add_task') }}"
+            method="POST"
+            class="task-form"
+        >
+
+
+            <!-- TITLE -->
+
+            <label for="title">
+                Task Title
+            </label>
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="Enter task title"
+                required
+            >
+
+
+
+            <!-- DESCRIPTION -->
+
+            <label for="description">
+                Description
+            </label>
+
+            <textarea
+                id="description"
+                name="description"
+                placeholder="Enter task description"
+            ></textarea>
+
+
+
+            <!-- CATEGORY -->
+
+            <label for="category">
+                Category
+            </label>
+
+            <input
+                type="text"
+                id="category"
+                name="category"
+                placeholder="Example: College"
+                value="General"
+            >
+
+
+
+            <!-- PRIORITY -->
+
+            <label for="priority">
+                Priority
+            </label>
+
+            <select
+                id="priority"
+                name="priority"
+            >
+
+                <option value="Low">
+                    Low
+                </option>
+
+                <option
+                    value="Medium"
+                    selected
+                >
+                    Medium
+                </option>
+
+                <option value="High">
+                    High
+                </option>
+
+            </select>
+
+
+
+            <!-- DUE DATE -->
+
+            <label for="due_date">
+                Due Date
+            </label>
+
+            <input
+                type="date"
+                id="due_date"
+                name="due_date"
+            >
+
+
+
+            <!-- SUBMIT -->
+
+            <button
+                type="submit"
+                class="primary-button"
+            >
+                Add Task
+            </button>
+
+
+        </form>
+
+    </section>
+
+
+
+    <!-- =====================================
+         SEARCH AND FILTERS
+    ====================================== -->
+
+    <section class="card">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Your Tasks
+                </h2>
+
+                <p class="section-subtitle">
+                    Search and filter your tasks
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form
+            action="{{ url_for('home') }}"
+            method="GET"
+            class="filter-form"
+        >
+
+
+            <!-- SEARCH -->
+
+            <input
+                type="text"
+                name="search"
+                placeholder="Search tasks..."
+                value="{{ search }}"
+            >
+
+
+
+            <!-- STATUS -->
+
+            <select name="status">
+
+                <option
+                    value="All"
+                    {% if selected_status == "All" %}
+                        selected
+                    {% endif %}
+                >
+                    All Status
+                </option>
+
+
+                <option
+                    value="Pending"
+                    {% if selected_status == "Pending" %}
+                        selected
+                    {% endif %}
+                >
+                    Pending
+                </option>
+
+
+                <option
+                    value="In Progress"
+                    {% if selected_status == "In Progress" %}
+                        selected
+                    {% endif %}
+                >
+                    In Progress
+                </option>
+
+
+                <option
+                    value="Completed"
+                    {% if selected_status == "Completed" %}
+                        selected
+                    {% endif %}
+                >
+                    Completed
+                </option>
+
+            </select>
+
+
+
+            <!-- PRIORITY -->
+
+            <select name="priority">
+
+                <option
+                    value="All"
+                    {% if selected_priority == "All" %}
+                        selected
+                    {% endif %}
+                >
+                    All Priorities
+                </option>
+
+
+                <option
+                    value="Low"
+                    {% if selected_priority == "Low" %}
+                        selected
+                    {% endif %}
+                >
+                    Low
+                </option>
+
+
+                <option
+                    value="Medium"
+                    {% if selected_priority == "Medium" %}
+                        selected
+                    {% endif %}
+                >
+                    Medium
+                </option>
+
+
+                <option
+                    value="High"
+                    {% if selected_priority == "High" %}
+                        selected
+                    {% endif %}
+                >
+                    High
+                </option>
+
+            </select>
+
+
+
+            <!-- CATEGORY -->
+
+            <select name="category">
+
+                <option
+                    value="All"
+                    {% if selected_category == "All" %}
+                        selected
+                    {% endif %}
+                >
+                    All Categories
+                </option>
+
+
+                {% for category in categories %}
+
+                    <option
+                        value="{{ category['category'] }}"
+                        {% if selected_category == category['category'] %}
+                            selected
+                        {% endif %}
+                    >
+
+                        {{ category['category'] }}
+
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+
+            <!-- FILTER -->
+
+            <button
+                type="submit"
+                class="filter-button"
+            >
+                Apply Filters
+            </button>
+
+
+
+            <!-- CLEAR -->
+
+            <a
+                href="{{ url_for('home') }}"
+                class="clear-button"
+            >
+                Clear
+            </a>
+
+
+        </form>
+
+    </section>
+
+
+
+    <!-- =====================================
+         TASK LIST
+    ====================================== -->
+
+    <section class="tasks-section">
+
+
+        {% if tasks %}
+
+
+            {% for task in tasks %}
+
+
+                <div class="task-card">
+
+
+                    <!-- TASK HEADER -->
+
+                    <div class="task-header">
+
+                        <h3>
+                            {{ task['title'] }}
+                        </h3>
+
+
+                        {% if task['priority'] == 'High' %}
+
+                            <span class="priority high">
+                                High
+                            </span>
+
+                        {% elif task['priority'] == 'Medium' %}
+
+                            <span class="priority medium">
+                                Medium
+                            </span>
+
+                        {% else %}
+
+                            <span class="priority low">
+                                Low
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- DESCRIPTION -->
+
+                    {% if task['description'] %}
+
+                        <p class="description">
+
+                            {{ task['description'] }}
+
+                        </p>
+
+                    {% endif %}
+
+
+
+                    <!-- TASK INFORMATION -->
+
+                    <div class="task-details">
+
+
+                        <p>
+
+                            <strong>
+                                Category:
+                            </strong>
+
+                            {{ task['category'] }}
+
+                        </p>
+
+
+                        <p>
+
+                            <strong>
+                                Status:
+                            </strong>
+
+
+                            {% if task['status'] == 'Completed' %}
+
+                                <span class="status completed">
+                                    Completed
+                                </span>
+
+                            {% elif task['status'] == 'In Progress' %}
+
+                                <span class="status progress">
+                                    In Progress
+                                </span>
+
+                            {% else %}
+
+                                <span class="status pending">
+                                    Pending
+                                </span>
+
+                            {% endif %}
+
+                        </p>
+
+
+                        {% if task['due_date'] %}
+
+                            <p>
+
+                                <strong>
+                                    Due Date:
+                                </strong>
+
+                                {{ task['due_date'] }}
+
+                            </p>
+
+
+                            {% if task['due_date'] < today
+                                and task['status'] != 'Completed' %}
+
+                                <span class="overdue">
+                                    ⚠ Overdue
+                                </span>
+
+                            {% endif %}
+
+                        {% endif %}
+
+
+                    </div>
+
+
+
+                    <!-- ACTION BUTTONS -->
+
+                    <div class="task-actions">
+
+
+                        {% if task['status'] != 'Completed' %}
+
+                            <form
+                                action="{{ url_for(
+                                    'complete_task',
+                                    task_id=task['id']
+                                ) }}"
+                                method="POST"
+                            >
+
+                                <button
+                                    type="submit"
+                                    class="complete-button"
+                                >
+                                    Mark Complete
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+
+
+                        <a
+                            href="{{ url_for(
+                                'edit_task',
+                                task_id=task['id']
+                            ) }}"
+                            class="edit-button"
+                        >
+                            Edit
+                        </a>
+
+
+
+                        <form
+                            action="{{ url_for(
+                                'delete_task',
+                                task_id=task['id']
+                            ) }}"
+                            method="POST"
+                            onsubmit="return confirmDelete();"
+                        >
+
+                            <button
+                                type="submit"
+                                class="delete-button"
+                            >
+                                Delete
+                            </button>
+
+                        </form>
+
+
+                    </div>
+
+
+                </div>
+
+
+            {% endfor %}
+
+
+        {% else %}
+
+
+            <div class="no-tasks">
+
+                <h3>
+                    No tasks found
+                </h3>
+
+                <p>
+                    Add a new task or change your filters.
+                </p>
+
+            </div>
+
+
+        {% endif %}
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =========================================
+     JAVASCRIPT
+========================================= -->
+
+<script
+    src="{{ url_for(
+        'static',
+        filename='js/script.js'
+    ) }}"
+></script>
+
+
+</body>
+
+</html>

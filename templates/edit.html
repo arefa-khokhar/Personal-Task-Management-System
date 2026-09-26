@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Edit Task
+    </title>
+
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='css/style.css'
+        ) }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<header class="main-header">
+
+    <div class="header-content">
+
+        <h1>
+            Edit Task
+        </h1>
+
+        <p>
+            Update your task information
+        </p>
+
+    </div>
+
+</header>
+
+
+
+<main class="container">
+
+
+    <section class="card edit-card">
+
+        <div class="section-heading">
+
+            <div>
+
+                <h2>
+                    Edit Task
+                </h2>
+
+                <p class="section-subtitle">
+                    Modify the details below
+                </p>
+
+            </div>
+
+        </div>
+
+
+
+        <form
+            action="{{ url_for(
+                'edit_task',
+                task_id=task['id']
+            ) }}"
+            method="POST"
+            class="task-form"
+        >
+
+
+            <!-- TITLE -->
+
+            <label for="title">
+                Task Title
+            </label>
+
+            <input
+                type="text"
+                id="title"
+                name="title"
+                value="{{ task['title'] }}"
+                required
+            >
+
+
+
+            <!-- DESCRIPTION -->
+
+            <label for="description">
+                Description
+            </label>
+
+            <textarea
+                id="description"
+                name="description"
+            >{{ task['description'] or '' }}</textarea>
+
+
+
+            <!-- CATEGORY -->
+
+            <label for="category">
+                Category
+            </label>
+
+            <input
+                type="text"
+                id="category"
+                name="category"
+                value="{{ task['category'] }}"
+            >
+
+
+
+            <!-- PRIORITY -->
+
+            <label for="priority">
+                Priority
+            </label>
+
+            <select
+                id="priority"
+                name="priority"
+            >
+
+                <option
+                    value="Low"
+                    {% if task['priority'] == 'Low' %}
+                        selected
+                    {% endif %}
+                >
+                    Low
+                </option>
+
+
+                <option
+                    value="Medium"
+                    {% if task['priority'] == 'Medium' %}
+                        selected
+                    {% endif %}
+                >
+                    Medium
+                </option>
+
+
+                <option
+                    value="High"
+                    {% if task['priority'] == 'High' %}
+                        selected
+                    {% endif %}
+                >
+                    High
+                </option>
+
+            </select>
+
+
+
+            <!-- STATUS -->
+
+            <label for="status">
+                Status
+            </label>
+
+            <select
+                id="status"
+                name="status"
+            >
+
+                <option
+                    value="Pending"
+                    {% if task['status'] == 'Pending' %}
+                        selected
+                    {% endif %}
+                >
+                    Pending
+                </option>
+
+
+                <option
+                    value="In Progress"
+                    {% if task['status'] == 'In Progress' %}
+                        selected
+                    {% endif %}
+                >
+                    In Progress
+                </option>
+
+
+                <option
+                    value="Completed"
+                    {% if task['status'] == 'Completed' %}
+                        selected
+                    {% endif %}
+                >
+                    Completed
+                </option>
+
+            </select>
+
+
+
+            <!-- DUE DATE -->
+
+            <label for="due_date">
+                Due Date
+            </label>
+
+            <input
+                type="date"
+                id="due_date"
+                name="due_date"
+                value="{{ task['due_date'] or '' }}"
+            >
+
+
+
+            <!-- BUTTONS -->
+
+            <div class="edit-actions">
+
+                <button
+                    type="submit"
+                    class="primary-button"
+                >
+                    Save Changes
+                </button>
+
+
+                <a
+                    href="{{ url_for('home') }}"
+                    class="cancel-button"
+                >
+                    Cancel
+                </a>
+
+            </div>
+
+
+        </form>
+
+
+    </section>
+
+
+</main>
+
+
+</body>
+
+</html>
