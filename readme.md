@@ -268,8 +268,7 @@ GITHUB
 The project is maintained using Git and hosted on GitHub.
 
 GitHub Repository:
-
-
+https://github.com/arefa-khokhar/personal-task-management-system
 
 Git is used to track changes and maintain different versions of the project during development.
 
